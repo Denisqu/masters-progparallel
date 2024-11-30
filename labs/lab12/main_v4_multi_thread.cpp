@@ -9,6 +9,7 @@
 #include <fmt/core.h>
 #include <tuple>
 #include <mpi.h>
+#include <random>
 
 
 namespace Gauss
@@ -17,6 +18,7 @@ namespace Gauss
 
     void debug_root(const std::string& msg, int rank)
     {
+        return;
         if (rank == 0) {
             std::cout << msg << std::endl;
         }
@@ -24,6 +26,16 @@ namespace Gauss
 
     void root_printMatrix(vector<vector<double>> &A, int rank)
     {
+        return;
+
+        static bool isInited = false;
+        
+        if (!isInited) {
+            isInited = true;
+        } else {
+            return;
+        }
+
         if (rank != 0) {
             return;
         }
@@ -187,6 +199,39 @@ namespace Gauss
     }
 }
 
+namespace {
+
+    using namespace std;
+
+    std::vector<std::vector<double>> generate_ones_matrix(int n)
+    {
+        std::vector<std::vector<double>> matrix(n, std::vector<double>(n, 1.0));
+        return matrix;
+    }
+    
+    vector<vector<double>> generate_matrix_with_unique_solution(int n) {
+        vector<vector<double>> A(n, vector<double>(n + 1));
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_real_distribution<> dis(-10.0, 10.0);   
+        // Generate a random square matrix and constants
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                A[i][j] = dis(gen);
+            }
+            A[i][n] = dis(gen); // Constant column
+        }   
+        // Make sure the matrix is non-singular by adding diagonal dominance
+        for (int i = 0; i < n; ++i) {
+            A[i][i] += n;
+        }   
+        return A;
+    }
+    
+}
+
+
+// mpirun -np 4 ./lab12_v4_multi
 int main(int argc, char **argv)
 {
     using namespace std;
@@ -201,6 +246,7 @@ int main(int argc, char **argv)
 
     if (rank == 0)
     {
+        /*
         cin >> n;
         A.resize(n, vector<double>(n + 1, 0));
 
@@ -217,8 +263,10 @@ int main(int argc, char **argv)
             cin >> A[i][n];
         }
 
+        */
         // Печать начальной матрицы
-        Gauss::root_printMatrix(A, rank);
+        A = generate_matrix_with_unique_solution(2000);
+        //Gauss::root_printMatrix(A, rank);
     }
 
     // Разослать рутом размер матрицы всем остальным процессам
@@ -244,9 +292,9 @@ int main(int argc, char **argv)
         cout << "Result:\t";
         for (size_t i = 0; i < x.size(); i++)
         {
-            cout << x[i] << " ";
+            //cout << x[i] << " ";
         }
-        cout << endl;
+        //cout << endl;
     }
 
     MPI_Finalize();
