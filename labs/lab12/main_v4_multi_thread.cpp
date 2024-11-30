@@ -213,7 +213,7 @@ namespace {
         vector<vector<double>> A(n, vector<double>(n + 1));
         random_device rd;
         mt19937 gen(rd());
-        uniform_real_distribution<> dis(-10.0, 10.0);   
+        uniform_real_distribution<> dis(1, 10.0);   
         // Generate a random square matrix and constants
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
@@ -265,7 +265,7 @@ int main(int argc, char **argv)
 
         */
         // Печать начальной матрицы
-        A = generate_matrix_with_unique_solution(2000);
+        A = generate_matrix_with_unique_solution(5);
         //Gauss::root_printMatrix(A, rank);
     }
 
@@ -292,9 +292,9 @@ int main(int argc, char **argv)
         cout << "Result:\t";
         for (size_t i = 0; i < x.size(); i++)
         {
-            //cout << x[i] << " ";
+            cout << x[i] << " ";
         }
-        //cout << endl;
+        cout << endl;
     }
 
     MPI_Finalize();
