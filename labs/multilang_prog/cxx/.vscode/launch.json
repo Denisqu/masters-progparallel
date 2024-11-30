@@ -1,0 +1,13 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {   "name": "test",
+            "program": "/home/user/univer/homework_and_labs/labs/multilang_prog/cxx/build/test/runTests",
+            "request": "launch",
+            "type": "cppdbg",
+            "cwd": "/home/user/univer/homework_and_labs/labs/multilang_prog/cxx/build/test" }
+    ]
+}
