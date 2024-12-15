@@ -265,7 +265,8 @@ int main(int argc, char **argv)
 
         */
         // Печать начальной матрицы
-        A = generate_matrix_with_unique_solution(5);
+        n = 2000;
+        A = generate_matrix_with_unique_solution(n);
         //Gauss::root_printMatrix(A, rank);
     }
 

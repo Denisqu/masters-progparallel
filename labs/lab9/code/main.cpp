@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <mpi.h>
 
+// mpirun -np 4 ./hello_mpi
 int main(int argc, char** argv) {
     MPI_Init(&argc, &argv); // Инициализация MPI
 
@@ -79,3 +80,16 @@ int main(int argc, char** argv) {
     MPI_Finalize(); // Завершение MPI
     return 0;
 }
+
+
+/*
+
+n = 1, time = 357 ms
+n = 2, time = 337 ms
+n = 3, time = 334 ms
+n = 4, time = 354 ms
+n = 5, time = 340 ms
+n = 6, time = 457 ms
+n = 12,time = ~2000 ms
+n = 18,time = ~2500 ms
+*/

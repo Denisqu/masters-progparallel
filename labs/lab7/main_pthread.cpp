@@ -8,6 +8,19 @@
 #include <pthread.h>
 #include <gmp.h>
 
+namespace {
+
+template <typename Func, typename... Args>
+auto measure_execution_time(Func func, Args&&... args) 
+{
+    auto start = std::chrono::high_resolution_clock::now();
+    auto result = func(std::forward<Args>(args)...);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duration = end - start;
+    std::cout << "Function execution time: " << duration.count() * 1000 << " ms" << std::endl;
+    return result;
+}
+
 struct ThreadData {
     int thread_id;
     int start; // начальный индекс, который будет обрабатывать этот поток
@@ -38,15 +51,23 @@ void* computeSubstrings(void* arg)
         mpz_init(binomCoeff);
         binomialCoefficient(binomCoeff, data->n, k);
 
+        // Calculate (a^(n-k) * b^k) and multiply with binomial coefficient
         mpz_t term, temp, a_mpz, b_mpz;
         mpz_init(term);
         mpz_init(temp);
         mpz_init_set_ui(a_mpz, data->a);
         mpz_init_set_ui(b_mpz, data->b);
 
+        // a^(n-k)
         mpz_pow_ui(term, a_mpz, data->n - k);
+
+        // b^k
         mpz_pow_ui(temp, b_mpz, k);
+        
+        // Multiply (a^(n-k) * b^k)
         mpz_mul(term, term, temp);
+
+        // Multiply by binomial coefficient
         mpz_mul(term, term, binomCoeff);
 
         char* term_str = mpz_get_str(nullptr, 10, term);
@@ -68,12 +89,11 @@ void* computeSubstrings(void* arg)
     return nullptr;
 }
 
-std::string binomialExpansion(int a, int b, int x, int y, int n)
+std::string binomialExpansion(int a, int b, int x, int y, int n, int num_threads)
 {
     std::string result = "(" + std::to_string(a) + " * x + " + std::to_string(b) + " * y)^" + std::to_string(n) + " = ";
     std::vector<std::string> substrings(n + 1);
 
-    const int num_threads = std::thread::hardware_concurrency();
     pthread_t threads[num_threads];
     ThreadData thread_data[num_threads];
 
@@ -101,12 +121,16 @@ std::string binomialExpansion(int a, int b, int x, int y, int n)
     return result;
 }
 
+}
+
 int main()
 {
     int a = 1, b = 2;
-    unsigned int n = 10;
+    unsigned int n = 20000;
 
-    const auto result = binomialExpansion(a, b, 1, 1, n);
-    std::cout << "Result: " << result << std::endl;
+    for (int i = 1; i < 19; ++i) {
+        std::cout << "N_threads = " << i << std::endl;
+        measure_execution_time(binomialExpansion, a, b, 1, 1, n, i);
+    }
     return 0;
 }

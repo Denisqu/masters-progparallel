@@ -72,3 +72,12 @@ int main(int argc, char** argv)
     MPI_Finalize();
     return 0;
 }
+
+/*
+
+N_mpi = 2, time  = 340ms
+N_mpi = 6, time  = 340ms
+N_mpi = 12, time = 421ms
+N_mpi = 18, time = 449ms
+
+*/

@@ -62,3 +62,12 @@ int main(int argc, char** argv)
     MPI_Finalize(); // Завершение MPI
     return 0;
 }
+
+/*
+
+N_mpi = 2, time  = 335ms
+N_mpi = 6, time  = 343ms
+N_mpi = 12, time = 424ms
+N_mpi = 18, time = 452ms
+
+*/

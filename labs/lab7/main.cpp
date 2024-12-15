@@ -10,6 +10,17 @@
 
 namespace {
 
+template <typename Func, typename... Args>
+auto measure_execution_time(Func func, Args&&... args) 
+{
+    auto start = std::chrono::high_resolution_clock::now();
+    auto result = func(std::forward<Args>(args)...);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duration = end - start;
+    std::cout << "Function execution time: " << duration.count() * 1000 << " ms" << std::endl;
+    return result;
+}
+
 void binomialCoefficient(mpz_t result, unsigned long long n, unsigned long long k)
 {
     // Convert n and k to GMP variables
@@ -85,35 +96,12 @@ std::string binomialExpansion(int a, int b, int x, int y, int n)
 int main()
 {
     int a = 1, b = 2;
-    unsigned int n = 10;
+    unsigned int n = 20000;
 
-#ifdef _OPENMP
-    std::cout << "using openmp..." << std::endl;
-    const auto num_threads = std::thread::hardware_concurrency();
-    omp_set_num_threads(n < num_threads ? n : num_threads);
-#endif
-
-    const auto result = binomialExpansion(a, b, 1, 1, n);
-    std::cout << "Result: " << result << std::endl;
+    for (int i = 1; i < 19; ++i) {
+        omp_set_num_threads(i);
+        std::cout << "N_threads = " << i << std::endl;
+        measure_execution_time(binomialExpansion, a, b, 1, 1, n);
+    }
     return 0;
 }
-
-
-/*
-
-n = 10000:
-
-single Thread:
-real    0m1.233s
-user    0m1.168s
-sys     0m0.065s
-
-OpenMP:
-real    0m0.292s
-user    0m1.660s
-sys     0m0.184s
-
-PThreads:
-TODO
-
-*/
